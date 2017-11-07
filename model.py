@@ -9,7 +9,7 @@ from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 import keras
 from keras.models import Sequential, load_model
-from keras.layers import Flatten, Dense, Lambda, Cropping2D
+from keras.layers import Flatten, Dense, Lambda, Cropping2D, Dropout
 from keras.layers.convolutional import Convolution2D
 from keras.layers.pooling import MaxPooling2D
 
@@ -94,6 +94,7 @@ def train_model():
       reader = csv.DictReader(csvfile)
       for row in reader:
             samples.append(row)
+    print('Example of samples from the csv file: ', row)
     
     train_samples, validation_samples = train_test_split(samples, test_size=0.2)
     print('Training Set Sample Size = {}'.format(len(train_samples)))
@@ -103,7 +104,6 @@ def train_model():
 
     model = Sequential()
     model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
-    # Cropping 70 pixels from the top and 25 pixels from the bottom
     model.add(Cropping2D(cropping=((70,25),(0,0))))
     model.add(Convolution2D(24, 5, 5, subsample=(2,2), activation='relu'))
     model.add(Convolution2D(36, 5, 5, subsample=(2,2), activation='relu'))
@@ -111,10 +111,13 @@ def train_model():
     model.add(Convolution2D(64, 3, 3, activation='relu'))
     model.add(Convolution2D(64, 3, 3, activation='relu'))
     model.add(Flatten())
-    model.add(Dense(100)) 
-    model.add(Dense(50)) 
-    model.add(Dense(10)) 
-    model.add(Dense(1)) 
+    model.add(Dense(100, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(50, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(10, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1))
 
     model.compile(loss='mse', optimizer='adam')
     history_object = model.fit_generator(train_generator, samples_per_epoch=6*len(train_samples), 
