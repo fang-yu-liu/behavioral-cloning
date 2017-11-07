@@ -65,8 +65,7 @@ The model was based on the NVIDIA architecture (https://arxiv.org/abs/1604.07316
 | Fully connected		| outputs 1, relu activation     |
 
 1. Normalization layer: ```model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))``` Normalize the input image.
-2. Cropping layer: ```model.add(Cropping2D(cropping=((70,25),(0,0))))
-``` The upper part of the image contains the sky and trees and the lower part of the image contains the hood of the car. Both of those are irrelevant informations for the model. Therefore, cropping out those parts will help the model focus on learning the useful part in the image.
+2. Cropping layer: ```model.add(Cropping2D(cropping=((70,25),(0,0))))``` The upper part of the image contains the sky and trees and the lower part of the image contains the hood of the car. Both of those are irrelevant informations for the model. Therefore, cropping out those parts will help the model focus on learning the useful part in the image.
 3. Implemented 5 convolution layers based on the NVIDIA architecture.
 4. Implemented 4 fully connected layers based on the NVIDIA architecture.
 5. Added dropout layers after each fully connected layers to avoid overfitting.
